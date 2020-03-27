@@ -1,0 +1,69 @@
+html {
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    color: black;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Lora', serif;
+}
+
+/*
+font-family: 'Khand', sans-serif;
+font-family: 'Raleway', sans-serif;
+font-family: 'Lora', serif;
+*/
+
+/* Individual Article Pages */
+
+h1,
+h2 {
+    margin-bottom: 2%;
+}
+
+h3 {
+    margin-top: 3%;
+}
+
+p {
+    margin-bottom: 3%;
+    line-height: 1.6;
+}
+
+img {
+    margin-bottom: 3%;
+    border: 5px solid #e4938f;
+}
+
+.submitted-by {
+    margin-left: .3%;
+    margin-top: .9%;
+    padding-top: .5%;
+    font-size: .75em;
+}
+
+/* Containers */
+
+.container {
+    margin-top: 5%;
+    margin-right: 15%;
+    margin-left: 15%;
+    margin-bottom: 5%;
+    max-width: 2000px;
+}
