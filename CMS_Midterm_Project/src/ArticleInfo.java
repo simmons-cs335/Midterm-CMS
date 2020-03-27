@@ -1,6 +1,7 @@
 import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.Scanner;
+import java.util.Date;
 
 public class ArticleInfo {
 
@@ -12,8 +13,8 @@ public class ArticleInfo {
     private String aFirst;
     private String aLast;
     private String photo;
-    private byte[] postAt;
-    private String posted;
+    private Timestamp postAt;
+    private int posted;
     private String H1;
     private String P1;
     private String H2;
@@ -54,8 +55,8 @@ public class ArticleInfo {
                 aFirst = rs.getString(3); //AuthorFirst
                 aLast = rs.getString(4); // AuthorLast
                 photo = rs.getString(5);// Photo path
-                postAt = rs.getBytes(6);
-                posted = rs.getString(7);
+                postAt = rs.getTimestamp(6); // time published
+                posted = rs.getInt(7); //published or not
                 H1 = rs.getString(8);
                 P1 = rs.getString(9);
                 H2 = rs.getString(10);
@@ -142,46 +143,55 @@ public class ArticleInfo {
 
     /**
      * @author brie okeefe
+     * @author kaya m
      */
     public String getBrowserAddress(){
-        return "Y:\\ "+ this.getIDString() + ".html";
+        return "file:///Y:/%20" + this.getIDString() + ".html";
     }
 
     /**
-     * @author brie okeefe
+     * @author kaya m
      */
-    public String getPostAt(){
-        String s = new String(postAt);
-        return s;
+    public Timestamp getPostAt(){
+        return postAt;
     }
 
     /**
-     * @author brie okeefe
+     * @author kaya m
      */
     //0000-00-00 00:00:00 time Stamp format
     // In progress
-    public void setPostAt(String time, int id){
-        byte[] timeBytes = time.getBytes();
-        String sqlUpdate = "UPDATE POSTINGS3 SET POST_AT = "+timeBytes+" WHERE ID = " + id +";";
+    public void setPostAt(String newPostTime, int id){
+        connection = db.getConnection();
+        Timestamp ts = Timestamp.valueOf(newPostTime);
+        String setPostAtQuery = "UPDATE POSTINGS3 SET POST_AT = '" + ts + "' WHERE ID = " + id + ";";
+        //String setPostAtQuery = "UPDATE POSTINGS3 SET POST_AT = '" + ts + "';";
         try {
-            PreparedStatement pstmt = connection.prepareStatement(sqlUpdate);
+            Statement stmt = connection.createStatement();
+            stmt.executeUpdate(setPostAtQuery);
+            postAt = ts;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
+     * @author kaya m
      * @author brie okeefe
      */
     //Status refers to if the article has been posted or not
-    public String getStatus(){ return posted; }
+    //0: not posted
+    //1: posted
+    public int getStatus(){ return posted; }
 
     public void setStatus(int i, int id){
-        String sqlUpdate = "UPDATE POSTINGS3 SET POSTED = ? WHERE ID = ?;";
+        connection = db.getConnection();
+        String setStatusQuery = "UPDATE POSTINGS3 SET POSTED = " + i + " WHERE ID = " + id + ";";
+
         try {
-            PreparedStatement pstmt = connection.prepareStatement(sqlUpdate);
-            pstmt.setInt(1, i);
-            pstmt.setInt(2, id);
+            Statement stmt = connection.createStatement();
+            stmt.executeUpdate(setStatusQuery);
+            posted = i;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -206,7 +216,7 @@ public class ArticleInfo {
     public static void searchBy() {
         Scanner input = new Scanner(System.in);
         System.out.println("Please select how you wish to search for articles: ");
-        System.out.println("1: Author" + "\n" + "2: Title" + "\n" + "3: ID number" + "\n" + "4: Display all");
+        System.out.println("1: Author" + "\n" + "2: Title" + "\n" + "3: ID Number" + "\n" + "4: Display all");
         boolean userInputIsValid = false;
         while (!userInputIsValid) {
             String userInput = input.nextLine();
@@ -223,7 +233,7 @@ public class ArticleInfo {
                 userInputIsValid = true;
                 db.displayInfo();
             } else {
-                System.out.println("Please type in a valid response.");
+                System.out.println("Please type in a valid response:\n");
             }
         }
     }
@@ -240,11 +250,11 @@ public class ArticleInfo {
             if (userResponse.equals("yes")) {
                 ContentRetrieval.main(null);
             }
-                else{
-                    System.exit(0);
-                }
+            else{
+                System.exit(0);
             }
         }
+    }
 
     /**
      * @author brie okeefe
@@ -340,12 +350,13 @@ public class ArticleInfo {
 
     /**
      * @author brie okeefe
+     * @author kaya m
      */
     public static void publisher(ArticleInfo ai) {
         FormatArticles fa = new FormatArticles();
         Scanner input = new Scanner(System.in);
         System.out.println("Please select what task you would like to accomplish with the selected article: ");
-        System.out.println("1: Check status" + "\n" + "2: Set status" + "\n" + "3: Check post time" + "\n" + "4: Format an article" + "\n");
+        System.out.println("1: Check status" + "\n" + "2: Set status" + "\n" + "3: Check post time" + "\n" + "4: Set post time" + "\n" + "5: Format article" + "\n");
         boolean userInputIsValid = false;
         while (!userInputIsValid) {
             String userInput = input.nextLine();
@@ -353,24 +364,32 @@ public class ArticleInfo {
                 userInputIsValid = true;
                 System.out.println(ai.getStatus());
             } else if (userInput.equals("2")) {
-                System.out.println("Has the article been posed yet? " + "\n" + "0: No" + "\n" + "1: Yes");
+                System.out.println("Has the article been posted yet? " + "\n" + "0: No" + "\n" + "1: Yes");
                 int bool = input.nextInt();
                 ai.setStatus(bool, ai.getID());
+                userInputIsValid = true;
+                System.out.println("The article status is now: " + ai.getStatus() + "\n");
             } else if (userInput.equals("3")) {
                 userInputIsValid = true;
-                System.out.println("The new post time is set for" + ai.getPostAt());
+                System.out.println("The current post time is set for " + ai.getPostAt() + "\n");
             } else if (userInput.equals("4")) {
                 userInputIsValid = true;
+                System.out.println("Please enter the updated post time in this format: YYYY-MM-DD HH:MM:SS");
+                String newPostTime = input.nextLine();
+                ai.setPostAt(newPostTime, ai.getID());
+            }
+            else if (userInput.equals("5")) {
+                userInputIsValid = true;
                 fileOutput(fa.formatArticleAsHTML(ai), ai.getIDString());
-                System.out.println("The HTML file should appear in your Y Drive");
-                System.out.println("Or you can copy and paste this " + ai.getBrowserAddress() + " the URL bar");
+                System.out.println("The HTML file: " + ai.getIDString() + ".html should appear in your Y Drive");
+                System.out.println("Or you can copy and paste: " + ai.getBrowserAddress() + " in your brower's URL bar\n");
             }
             //Make Option 4 if finished
             //System.out.println("When would you like this article posted?");
             //String time = input.nextLine();
             //ai.setPostTime(time, ai.getID());
             else {
-                System.out.println("Please type in a valid response.");
+                System.out.println("Please type in a valid response:");
             }
         }
     }

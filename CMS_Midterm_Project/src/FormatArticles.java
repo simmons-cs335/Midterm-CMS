@@ -1,7 +1,7 @@
 public class FormatArticles {
 
     /**
-     * credit for the css file sheet used in this class
+     * credit for the css stylsheet: styles.css
      * @author kaya m
      */
 
@@ -11,8 +11,8 @@ public class FormatArticles {
     String htmlArticle = " ";
 
     /**
-     * @author brie okeefe
      * @author kaya m
+     * @author brie okeefe
      */
     //format Article as HTML
     public String formatArticleAsHTML(ArticleInfo article) {
@@ -26,8 +26,8 @@ public class FormatArticles {
     }
 
     /**
-     * @author brie okeefe
      * @author kaya m
+     * @author brie okeefe
      */
     //format Head as HTML
     public String formatHeadAsHTML(ArticleInfo article) {
@@ -40,8 +40,8 @@ public class FormatArticles {
     }
 
     /**
-     * @author brie okeefe
      * @author kaya m
+     * @author brie okeefe
      */
     //format Header as HTML
     public String formatHeaderAsHTML(ArticleInfo article) {
@@ -55,8 +55,8 @@ public class FormatArticles {
     }
 
     /**
-     * @author brie okeefe
      * @author kaya m
+     * @author brie okeefe
      */
     // Format Body as html
     public String formatBodyAsHTML(ArticleInfo article) {

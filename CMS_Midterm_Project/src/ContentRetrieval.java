@@ -12,14 +12,14 @@ public class ContentRetrieval {
         Scanner input = new Scanner(System.in);
 
         /**
-        // Program Menu
-        // 1: search by title, author's last name, or ID
-        // 2: display all
-        // 3: more options includes: 1: check status 2: set status 3: check post time 3: format an article
-        */
+         // Program Menu
+         // 1: search by title, author's last name, or ID
+         // 2: display all
+         // 3: more options includes: 1: check status 2: set status 3: check post time 3: format an article
+         */
 
-        System.out.println("------ MAIN MENU ------");
-        System.out.println("Please make a selection " + "\n" + "1: Search for an article " + "\n" + "2: To display all information" + "\n" + "3: For more options (article ID# required)");
+        System.out.println("------ MAIN MENU ------"+"\n");
+        System.out.println("Please make a selection: " + "\n" + "\n" + "1: Search for an article " + "\n" + "2: Display all articles" + "\n" + "3: More options (Article ID required)");
         int userChoice = input.nextInt();
         if (userChoice == 1) {
             ArticleInfo.searchBy();
@@ -31,7 +31,7 @@ public class ContentRetrieval {
             ArticleInfo a = new ArticleInfo(idPublisher);
             ArticleInfo.publisher(a);
         } else {
-            System.out.println("Please try again and enter a valid number");
+            System.out.println("Invalid number. Please enter a number from 1-3:");
         }
 
         ArticleInfo.loopBack();
